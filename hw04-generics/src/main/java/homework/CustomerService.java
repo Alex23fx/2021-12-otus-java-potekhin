@@ -41,11 +41,11 @@ public class CustomerService {
     }
 
     /**
-     * Метод возвращает копию Map.Entry<Customer, String>
+     * Метод возвращает копию Map.Entry<Customer, String>, куда помещает копию класса Customer
      * @param mapEntry оригинальный объект
      * @return копия оригинального объекта
      */
-    protected Map.Entry<Customer, String> getCopyMapEntry(Map.Entry<Customer, String> mapEntry) {
+    private Map.Entry<Customer, String> getCopyMapEntry(Map.Entry<Customer, String> mapEntry) {
         return new AbstractMap.SimpleImmutableEntry<>(new Customer(mapEntry.getKey()), mapEntry.getValue());
     }
 
