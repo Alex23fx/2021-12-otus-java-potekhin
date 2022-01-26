@@ -7,13 +7,13 @@ public class CustomerReverseOrder {
 
     //todo: 2. надо реализовать методы этого класса
     //надо подобрать подходящую структуру данных, тогда решение будет в "две строчки"
-    private final LinkedList<Customer> customers = new LinkedList<>();
+    private final Deque<Customer> customers = new ArrayDeque<>();
 
     public void add(Customer customer) {
-        customers.offer(customer);
+        customers.push(customer);
     }
 
     public Customer take() {
-        return customers.pollLast();
+        return customers.pop();
     }
 }

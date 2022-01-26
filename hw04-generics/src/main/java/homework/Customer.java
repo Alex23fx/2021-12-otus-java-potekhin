@@ -2,7 +2,7 @@ package homework;
 
 import java.util.Objects;
 
-public class Customer implements Comparable<Customer> {
+public class Customer {
 
     private final long id;
     private String name;
@@ -72,9 +72,9 @@ public class Customer implements Comparable<Customer> {
         return (int)(id ^ (id >>> 32));
     }
 
-    @Override
-    public int compareTo(@SuppressWarnings("NullableProblems") Customer customer) {
-        Objects.requireNonNull(customer);
-        return Long.compare(this.scores, customer.getScores());
-    }
+//    @Override
+//    public int compareTo(@SuppressWarnings("NullableProblems") Customer customer) {
+//        Objects.requireNonNull(customer);
+//        return Long.compare(this.scores, customer.getScores());
+//    }
 }

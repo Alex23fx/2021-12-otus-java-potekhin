@@ -13,7 +13,8 @@ public class CustomerService {
     private final TreeMap<Customer, String> customers;
 
     public CustomerService() {
-        this.customers = new TreeMap<>();
+
+        this.customers = new TreeMap<>( (o1, o2) -> {return Long.compare(o1.getScores(), o2.getScores());});
     }
 
     public Map.Entry<Customer, String> getSmallest() {
@@ -23,15 +24,10 @@ public class CustomerService {
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
         // определим следующий ключ
-        Customer customerNextKey = customers.navigableKeySet().stream()
-                .filter(c -> c.getScores() > customer.getScores())
-                .findFirst()
-                .orElse(null);
+        Map.Entry<Customer, String> mapEntry = customers.higherEntry(customer);
 
-        if(customerNextKey == null)
+        if(mapEntry == null)
             return null;
-        // определим Entry по слудуюему ключю
-        Map.Entry<Customer, String> mapEntry = customers.ceilingEntry(customerNextKey);
         // вернем копию
         return getCopyMapEntry(mapEntry);
     }
