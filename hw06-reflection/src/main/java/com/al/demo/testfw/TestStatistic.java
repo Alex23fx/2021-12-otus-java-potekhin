@@ -1,4 +1,4 @@
-package com.al.demo.testFW;
+package com.al.demo.testfw;
 
 /**
  * Класс хранит информацию о кол-ве пройденных тестов

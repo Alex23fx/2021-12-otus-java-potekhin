@@ -1,4 +1,4 @@
-package com.al.demo.testFW;
+package com.al.demo.testfw;
 
 import java.lang.reflect.Method;
 import java.util.*;

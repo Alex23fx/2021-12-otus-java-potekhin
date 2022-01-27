@@ -1,9 +1,10 @@
 package com.al.demo;
 
-import com.al.demo.testFW.TestFWRunner;
+import com.al.demo.testfw.TestFWRunner;
 
 public class Application {
     public static void main(String[] args) throws Exception {
-        TestFWRunner.runTest(DemoTest.class);
+        TestFWRunner testFWRunner = new TestFWRunner();
+        testFWRunner.runTest(DemoTest.class);
     }
 }

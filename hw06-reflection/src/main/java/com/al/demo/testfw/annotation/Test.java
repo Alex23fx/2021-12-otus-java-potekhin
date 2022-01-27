@@ -1,4 +1,4 @@
-package com.al.demo.testFW.annotation;
+package com.al.demo.testfw.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

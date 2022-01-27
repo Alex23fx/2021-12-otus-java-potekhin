@@ -1,11 +1,10 @@
-package com.al.demo.testFW;
+package com.al.demo.testfw;
 
-import com.al.demo.testFW.annotation.After;
-import com.al.demo.testFW.annotation.Before;
-import com.al.demo.testFW.annotation.Test;
+import com.al.demo.testfw.annotation.After;
+import com.al.demo.testfw.annotation.Before;
+import com.al.demo.testfw.annotation.Test;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
 
 public class TestFWRunner {
     private final static String MSG_ERROR_CALL_METHOD = "Filed to call method: %s %n";
@@ -21,12 +20,11 @@ public class TestFWRunner {
 
     private final static String MSG_SEPARATOR = "--------------------------------------------  %n";
 
-    public static void runTest(Class<?> clazz){
+    public void runTest(Class<?> clazz){
         TestStatistic testStatistic = new TestStatistic();
 
         // найдем методы, которые необходимо запускать
-        MethodsInfo mInfo = new MethodsInfo();
-        defineMethods(clazz, mInfo);
+        MethodsInfo mInfo = defineMethods(clazz);
 
         // выполним запуск методов
         Method method;
@@ -39,12 +37,12 @@ public class TestFWRunner {
                 // выполним запуск методов @Before
                 callMethods(objTest, mInfo.getBeforeMethods(), MSG_ERROR_CALL_BEFORE_METHOD);
                 // выполним запуск метода @Test
-                callMethod(objTest, method, Optional.of(testStatistic), MSG_ERROR_CALL_TEST_METHOD);
+                callMethod(objTest, method, testStatistic, MSG_ERROR_CALL_TEST_METHOD);
                 // выполним запусе методов @After
                 callMethods(objTest, mInfo.getAfterMethods(), MSG_ERROR_CALL_AFTER_METHOD);
             } catch (Exception ex){
                 System.out.print(MSG_ERROR_CREATE_OBJECT);
-                System.out.println(ex);
+                ex.printStackTrace();
             }
         }
 
@@ -55,7 +53,8 @@ public class TestFWRunner {
     /**
      * Метод определяет тестируемые методы тестового класса
      */
-    private static void defineMethods(Class<?> clazz, MethodsInfo mInfo){
+    private MethodsInfo defineMethods(Class<?> clazz){
+        MethodsInfo mInfo = new MethodsInfo();
         Method[] methods = ReflectionHelper.getMethods(clazz);
         for (Method method : methods) {
             method.setAccessible(true);
@@ -73,37 +72,40 @@ public class TestFWRunner {
                 mInfo.addMethodTest(method);
 
         }
+        return mInfo;
     }
 
     /**
      * Метод производит поочередный запуск переданного набора методов
      * @param methods набор методов
      */
-    private static void callMethods(Object obj, Iterable<Method> methods, String msgErrorTemplate){
+    private void callMethods(Object obj, Iterable<Method> methods, String msgErrorTemplate){
         for(Method method: methods){
-            callMethod(obj, method, Optional.empty(), msgErrorTemplate);
+            callMethod(obj, method, null, msgErrorTemplate);
         }
     }
 
     /**
      * Метод производит запуск переданного метода
      */
-    private static void callMethod(Object obj, Method method, Optional<TestStatistic> testStatistics, String msgErrorTemplate){
+    private void callMethod(Object obj, Method method, TestStatistic testStatistic, String msgErrorTemplate) {
         try {
             ReflectionHelper.callMethod(obj, method, (Object[]) null);
-            if(testStatistics.isPresent()) testStatistics.get().incrementSuccessTest();
+            if (testStatistic != null) {
+                testStatistic.incrementSuccessTest();
+            }
         } catch (Exception ex) {
-            if(testStatistics.isPresent()) testStatistics.get().incrementFallTest();
-            System.out.printf(msgErrorTemplate, method.getName());
-            System.out.println(ex.toString());
+            if (testStatistic != null) {
+                testStatistic.incrementFallTest();
+            }
+            System.out.printf(
+                    msgErrorTemplate != null && !msgErrorTemplate.isEmpty() ? msgErrorTemplate : MSG_ERROR_CALL_METHOD,
+                    method.getName());
+            ex.printStackTrace();
         }
     }
 
-    private static void callMethod(Object obj, Method method){
-        callMethod(obj, method, Optional.empty(), MSG_ERROR_CALL_METHOD);
-    }
-
-    private static void printStatisticsInfo(TestStatistic testStatistic ){
+    private void printStatisticsInfo(TestStatistic testStatistic ){
         System.out.printf(MSQ_INFO_STATISTICS,
                 testStatistic.getCountTotalTest(),
                 testStatistic.getCountSuccessTest(),

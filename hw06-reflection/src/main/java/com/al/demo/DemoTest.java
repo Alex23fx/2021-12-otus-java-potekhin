@@ -1,8 +1,8 @@
 package com.al.demo;
 
-import com.al.demo.testFW.annotation.After;
-import com.al.demo.testFW.annotation.Before;
-import com.al.demo.testFW.annotation.Test;
+import com.al.demo.testfw.annotation.After;
+import com.al.demo.testfw.annotation.Before;
+import com.al.demo.testfw.annotation.Test;
 
 public class DemoTest {
 
