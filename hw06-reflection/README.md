@@ -5,4 +5,4 @@
 #### Курс: Java Developer. Professional
 
 Задание № 3
-Работа с Generic коллекциями
+Работа с рефлексией

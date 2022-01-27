@@ -8,20 +8,20 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 
 public class TestFWRunner {
-    private final static String MSG_ERROR_CALL_METHOD = "Filed to call method: %s";
-    private final static String MSG_ERROR_CALL_BEFORE_METHOD = "Filed to call @Before method: %s";
-    private final static String MSG_ERROR_CALL_AFTER_METHOD = "Filed to call @After method: %s";
-    private final static String MSG_ERROR_CALL_TEST_METHOD = "Filed to call @Test method: %s";
-    private final static String MSG_ERROR_CREATE_OBJECT = "Filed to create object!";
+    private final static String MSG_ERROR_CALL_METHOD = "Filed to call method: %s %n";
+    private final static String MSG_ERROR_CALL_BEFORE_METHOD = "Filed to call @Before method: %s %n";
+    private final static String MSG_ERROR_CALL_AFTER_METHOD = "Filed to call @After method: %s %n";
+    private final static String MSG_ERROR_CALL_TEST_METHOD = "Filed to call @Test method: %s %n";
+    private final static String MSG_ERROR_CREATE_OBJECT = "Filed to create object! %n";
 
-    private final static String MSG_INFO_TEST_METHOD = "Test method: %s";
-    private final static String MSQ_INFO_CREATE_OBJECT = "Create object: %s";
+    private final static String MSG_INFO_TEST_METHOD = "Test method: %s %n";
+    private final static String MSQ_INFO_CREATE_OBJECT = "Create object: %s %n";
 
-    private final static String MSQ_INFO_STATISTICS = "COUNT TESTS: %d, SUCCESSFUL TESTS: %d, FALL TESTS: %d";
+    private final static String MSQ_INFO_STATISTICS = "COUNT TESTS: %d, SUCCESSFUL TESTS: %d, FALL TESTS: %d %n";
 
-    private final static String MSG_SEPARATOR = "--------------------------------------------";
+    private final static String MSG_SEPARATOR = "--------------------------------------------  %n";
 
-    public static void runTest(Class clazz){
+    public static void runTest(Class<?> clazz){
         TestStatistic testStatistic = new TestStatistic();
 
         // найдем методы, которые необходимо запускать
@@ -29,22 +29,22 @@ public class TestFWRunner {
         defineMethods(clazz, mInfo);
 
         // выполним запуск методов
-        Method method = null;
+        Method method;
         while ((method = mInfo.getMethodTest()) != null){
-            System.out.println(MSG_SEPARATOR);
-            System.out.println(String.format(MSG_INFO_TEST_METHOD, method.getName()));
+            System.out.print(MSG_SEPARATOR);
+            System.out.printf((MSG_INFO_TEST_METHOD), method.getName());
             try{
-                System.out.println(String.format(MSQ_INFO_CREATE_OBJECT, clazz));
-                Object objTest = ReflectionHelper.instantiate(clazz, null);
+                System.out.printf(MSQ_INFO_CREATE_OBJECT, clazz);
+                Object objTest = ReflectionHelper.instantiate(clazz, (Object[]) null);
                 // выполним запуск методов @Before
-                callMethods(objTest, mInfo.getMethodBeforeIterable(), MSG_ERROR_CALL_BEFORE_METHOD);
+                callMethods(objTest, mInfo.getBeforeMethods(), MSG_ERROR_CALL_BEFORE_METHOD);
                 // выполним запуск метода @Test
                 callMethod(objTest, method, Optional.of(testStatistic), MSG_ERROR_CALL_TEST_METHOD);
                 // выполним запусе методов @After
-                callMethods(objTest, mInfo.getMethodAfterIterable(), MSG_ERROR_CALL_AFTER_METHOD);
+                callMethods(objTest, mInfo.getAfterMethods(), MSG_ERROR_CALL_AFTER_METHOD);
             } catch (Exception ex){
-                System.out.println(MSG_ERROR_CREATE_OBJECT);
-                System.out.println(ex.toString());
+                System.out.print(MSG_ERROR_CREATE_OBJECT);
+                System.out.println(ex);
             }
         }
 
@@ -54,25 +54,22 @@ public class TestFWRunner {
 
     /**
      * Метод определяет тестируемые методы тестового класса
-     * @param clazz
-     * @param mInfo
      */
-    private static void defineMethods(Class clazz, MethodsInfo mInfo){
+    private static void defineMethods(Class<?> clazz, MethodsInfo mInfo){
         Method[] methods = ReflectionHelper.getMethods(clazz);
-        for(int i =0; i < methods.length; i++){
-            Method method = methods[i];
+        for (Method method : methods) {
             method.setAccessible(true);
 
             Before before = method.getAnnotation(Before.class);
-            if(before != null)
+            if (before != null)
                 mInfo.addMethodBefore(method);
 
             After after = method.getAnnotation(After.class);
-            if(after != null)
+            if (after != null)
                 mInfo.addMethodAfter(method);
 
             Test test = method.getAnnotation(Test.class);
-            if(test != null)
+            if (test != null)
                 mInfo.addMethodTest(method);
 
         }
@@ -81,7 +78,6 @@ public class TestFWRunner {
     /**
      * Метод производит поочередный запуск переданного набора методов
      * @param methods набор методов
-     * @param obj
      */
     private static void callMethods(Object obj, Iterable<Method> methods, String msgErrorTemplate){
         for(Method method: methods){
@@ -91,18 +87,14 @@ public class TestFWRunner {
 
     /**
      * Метод производит запуск переданного метода
-     * @param obj
-     * @param method
-     * @param testStatistics
-     * @param msgErrorTemplate
      */
     private static void callMethod(Object obj, Method method, Optional<TestStatistic> testStatistics, String msgErrorTemplate){
         try {
-            ReflectionHelper.callMethod(obj, method, null);
+            ReflectionHelper.callMethod(obj, method, (Object[]) null);
             if(testStatistics.isPresent()) testStatistics.get().incrementSuccessTest();
         } catch (Exception ex) {
             if(testStatistics.isPresent()) testStatistics.get().incrementFallTest();
-            System.out.println(String.format(msgErrorTemplate, method.getName()));
+            System.out.printf(msgErrorTemplate, method.getName());
             System.out.println(ex.toString());
         }
     }
@@ -112,10 +104,10 @@ public class TestFWRunner {
     }
 
     private static void printStatisticsInfo(TestStatistic testStatistic ){
-        System.out.println(String.format(MSQ_INFO_STATISTICS,
+        System.out.printf(MSQ_INFO_STATISTICS,
                 testStatistic.getCountTotalTest(),
                 testStatistic.getCountSuccessTest(),
-                testStatistic.getCountFallTest()));
+                testStatistic.getCountFallTest());
     }
 
 }

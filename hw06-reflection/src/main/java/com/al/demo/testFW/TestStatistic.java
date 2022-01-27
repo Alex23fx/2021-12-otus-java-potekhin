@@ -1,5 +1,8 @@
 package com.al.demo.testFW;
 
+/**
+ * Класс хранит информацию о кол-ве пройденных тестов
+ */
 public class TestStatistic {
     /**
      * Кол-во успешно выполенных тестов
@@ -21,14 +24,23 @@ public class TestStatistic {
      */
     public void incrementFallTest(){ fallTest++; }
 
+    /**
+     * Метод возвращает кол-во успешно пройденных тестов
+     */
     public int getCountSuccessTest(){
         return successTest;
     }
 
+    /**
+     * Метод возвращает кол-во проваленных тестов
+     */
     public int getCountFallTest(){
         return fallTest;
     }
 
+    /**
+     * Метод возвращает общее кол-во запущенных тестов
+     */
     public int getCountTotalTest(){
         return fallTest + successTest;
     }
