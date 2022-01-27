@@ -29,6 +29,8 @@ allprojects {
                 mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.2")
             }
             dependency("com.google.guava:guava:${Versions.guava}")
+            dependency("org.openjdk.jmh:jmh-core:${Versions.jmh}")
+            dependency("org.openjdk.jmh:jmh-generator-annprocess:${Versions.jmh}")
         }
     }
 
@@ -36,5 +38,9 @@ allprojects {
         resolutionStrategy {
             failOnVersionConflict()
         }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:deprecation"
     }
 }
