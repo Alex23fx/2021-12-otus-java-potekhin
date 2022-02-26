@@ -19,6 +19,7 @@ public class Summator {
 //        if (listValues.size() % 6_600_000 == 0) {
 //            listValues.clear();
 //        }
+
         count++;
         if (count % 6_600_000 == 0) {
             count = 0;
